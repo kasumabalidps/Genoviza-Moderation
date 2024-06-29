@@ -187,4 +187,20 @@ captcha.on("success", async data => {
     data.member.guild.channels.cache.get("1256676647223038075").send(`\`${data.member.user.username} sudah berhasil Solving CAPTCHA!\``);
 });
 
+// crash handler
+process.on('uncaughtException', (error) => {
+    console.error('💻 Bot mengalami kesalahan dan akan di-restart:', error);
+    process.exit(1);
+});
+
+process.on('exit', (code) => {
+    console.log(`💻 Bot sedang di-restart dengan kode ${code}`);
+    setTimeout(() => {
+        process.exec(process.argv[0], process.argv.slice(1));
+    }, 1000);
+});
+
+
+
+
 client.login(process.env.TOKENBOT);
