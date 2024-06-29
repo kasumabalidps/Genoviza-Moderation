@@ -102,7 +102,7 @@ client.on("messageCreate", async message => {
 });
 
 client.on("messageCreate", async message => {
-    if (config.channelId.includes(message.channel.id)) {
+    if (config.channelId.includes(message.channel.id) || message.channel.type === "GUILD_PUBLIC_THREAD") {
         const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)|discord\.gg\//gi;
         const found = message.content.match(regex);
         if (found && found.length > 0) {
