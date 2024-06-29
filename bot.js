@@ -200,7 +200,4 @@ process.on('exit', (code) => {
     }, 1000);
 });
 
-
-
-
 client.login(process.env.TOKENBOT);
