@@ -47,9 +47,7 @@ const captcha = new Captcha(client, {
     customSuccessEmbed: new EmbedBuilder()
         .setTitle("Success CAPTCHA Verification 😊")
         .setDescription("Kamu berhasil memverifikasi! Selamat datang di server Genoviza! Jangan lupa baca peraturan server dan kenali komunitas kita. Jika ada pertanyaan, jangan ragu untuk bertanya di channel bantuan. Nikmati petualanganmu dan semoga betah di sini!"),
-    })
-    
-    
+});
 
 client.on("ready", () => {
     console.log(`🚀 Bot telah siap!`);
@@ -70,8 +68,8 @@ client.on("ready", () => {
 client.on("messageCreate", async message => {
     if (message.content === `${prefix}verifysetup` && message.member.roles.cache.has("1234453620293111849") && message.member.roles.cache.has("898586576169353218")) {
         const embed = new EmbedBuilder()
-        .setColor("#1e2124")
-        .setDescription("Klik tombol di bawah untuk memverifikasi bahwa kamu manusia dan mendapatkan akses ke server.");
+            .setColor("#1e2124")
+            .setDescription("Klik tombol di bawah untuk memverifikasi bahwa kamu manusia dan mendapatkan akses ke server.");
         
         const row = new ActionRowBuilder()
             .addComponents(
@@ -94,20 +92,92 @@ client.on("interactionCreate", async interaction => {
 });
 
 client.on("messageCreate", async message => {
-    if (message.channel.id === "1256524383594352700") {
-        if (message.content.length > 10) {
-            message.delete();
+    if (message.channel.id === "1256524383594352700" && message.content.length > 10) {
+        try {
+            await message.delete();
+        } catch (error) {
+            console.error(`Error deleting message: ${error}`);
         }
     }
 });
 
 client.on("messageCreate", async message => {
     if (config.channelId.includes(message.channel.id)) {
-        if (message.content.includes("http://") || message.content.includes("https://") || message.content.includes("discord.gg/")) {
-            message.delete();
-            message.channel.send("Hei bang jangan ngirim link sembarangan ya disini!! 😡").then(msg => {
-                setTimeout(() => msg.delete(), 5 * 1000);
+        const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)|discord\.gg\//gi;
+        const found = message.content.match(regex);
+        if (found && found.length > 0) {
+            const allowedDomains = config.allowedDomains;
+            let isAllowed = false;
+            found.forEach(link => {
+                allowedDomains.forEach(domain => {
+                    if (link.includes(domain)) {
+                        isAllowed = true;
+                    }
+                });
             });
+            if (!isAllowed) {
+                try {
+                    await message.delete();
+                } catch (error) {
+                    console.error(`Error deleting message: ${error}`);
+                }
+                message.channel.send("Tidak diperbolehkan mengirimkan link ke chat ini. Pastikan Anda tidak mengirimkan link phishing atau berbahaya. 😊").then(msg => {
+                    setTimeout(() => msg.delete(), 5 * 1000);
+                });
+            }
+        }
+    }
+});
+
+client.on("messageCreate", async message => {
+    if (message.content.startsWith("!addlinkchannel")) {
+        if (!message.member.roles.cache.some(role => role.id === "1234453620293111849")) {
+            message.channel.send("Maaf, Anda tidak memiliki izin untuk menggunakan command ini. 😊");
+            return;
+        }
+        const channelId = message.content.split(" ")[1];
+        if (channelId) {
+            if (config.channelId.includes(channelId)) {
+                message.channel.send(`Channel dengan ID ${channelId} (${message.guild.channels.cache.get(channelId).name}) sudah ada di dalam daftar deteksi link phishing. Silahkan cek pada !listlinkchannel 📝`);
+            } else {
+                config.channelId.push(channelId);
+                fs.writeFileSync('./config.yml', yaml.dump(config));
+                message.channel.send(`Channel dengan ID ${channelId} (${message.guild.channels.cache.get(channelId).name}) telah ditambahkan ke dalam daftar deteksi link phishing. 👍`);
+            }
+        } else {
+            message.channel.send("Format command salah. Gunakan `!addlinkchannel [id]`. 🤔");
+        }
+    } else if (message.content.startsWith("!removelinkchannel")) {
+        if (!message.member.roles.cache.some(role => role.id === "1234453620293111849")) {
+            message.channel.send("Maaf, Anda tidak memiliki izin untuk menggunakan command ini. 😊");
+            return;
+        }
+        const channelId = message.content.split(" ")[1];
+        if (channelId) {
+            if (config.channelId.includes(channelId)) {
+                const index = config.channelId.indexOf(channelId);
+                config.channelId.splice(index, 1);
+                fs.writeFileSync('./config.yml', yaml.dump(config));
+                message.channel.send(`Channel dengan ID ${channelId} (${message.guild.channels.cache.get(channelId).name}) telah dihapus dari daftar deteksi link phishing. 👋`);
+            } else {
+                message.channel.send(`Channel dengan ID ${channelId} tidak ditemukan dalam daftar deteksi link phishing. 🤔`);
+            }
+        } else {
+            message.channel.send("Format command salah. Gunakan `!removelinkchannel [id]`. 🤔");
+        }
+    } else if (message.content === "!listlinkchannel") {
+        if (!message.member.roles.cache.some(role => role.id === "1234453620293111849")) {
+            message.channel.send("Maaf, Anda tidak memiliki izin untuk menggunakan command ini. 😊");
+            return;
+        }
+        if (config.channelId.length > 0) {
+            let channelList = "📝 Daftar channel untuk deteksi link phishing:\n";
+            config.channelId.forEach((id, index) => {
+                channelList += `${index + 1}. ${id} - ${message.guild.channels.cache.get(id).name}\n`;
+            });
+            message.channel.send(channelList);
+        } else {
+            message.channel.send("Tidak ada channel yang terdaftar untuk deteksi link phishing. 😔");
         }
     }
 });
