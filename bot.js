@@ -50,7 +50,7 @@ const captcha = new Captcha(client, {
 });
 
 client.on("ready", () => {
-    console.log(`🚀 Bot telah siap!`);
+    console.log(`🚀 Genoviza Bot Online!`);
     let memberCount = client.guilds.cache.reduce((a, g) => a + g.memberCount, 0);
     let isWatchingServer = true;
     setInterval(() => {
@@ -195,8 +195,12 @@ process.on('uncaughtException', (error) => {
 
 process.on('exit', (code) => {
     console.log(`💻 Bot sedang di-restart dengan kode ${code}`);
+    console.log(`💻 Bot akan di-restart dalam 1 detik...`);
     setTimeout(() => {
-        process.exec(process.argv[0], process.argv.slice(1));
+        console.log(`💻 Bot sedang di-restart...`);
+        require('child_process').spawn(process.argv[0], process.argv, {
+            stdio: 'inherit'
+        });
     }, 1000);
 });
 
