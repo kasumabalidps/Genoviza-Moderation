@@ -23,7 +23,7 @@ eventHandler(client);
 const commandHandler = require('./handlers/commandHandler');
 commandHandler(client);
 
-
-
+// require('./events/guild/captchaSuccess')(client);
+require('./utils/captcha')(client);
 
 client.login(process.env.TOKENBOT);

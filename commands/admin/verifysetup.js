@@ -18,7 +18,12 @@ module.exports = {
                         .setCustomId("verify")
                 );
 
-            await message.channel.send({ embeds: [embed], components: [row], ephemeral: true });
+            try {
+                await message.channel.send({ embeds: [embed], components: [row], ephemeral: true });
+            } catch (error) {
+                console.error(`Gagal mengirim pesan verifikasi: ${error.message}`);
+                message.channel.send("Gagal mengirim pesan verifikasi. Silakan coba lagi nanti.");
+            }
         }
     },
 };
