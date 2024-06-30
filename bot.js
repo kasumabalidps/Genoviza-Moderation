@@ -91,15 +91,23 @@ client.on("interactionCreate", async interaction => {
     }
 });
 
-client.on("messageCreate", async message => {
-    if (message.channel.id === "1256524383594352700" && message.content.length > 10) {
-        try {
-            await message.delete();
-        } catch (error) {
-            console.error(`Error deleting message: ${error}`);
-        }
-    }
-});
+// client.on("messageCreate", async message => {
+//     if (message.channel.id === "1256524383594352700" && message.content.length > 10) {
+//         try {
+//             const fetchedMessage = await message.channel.messages.fetch(message.id, { force: true });
+//             if (fetchedMessage) {
+//                 await fetchedMessage.delete();
+//                 console.log(`Message with ID ${message.id} deleted successfully`);
+//             }
+//         } catch (error) {
+//             if (error.code === 10008) {
+//                 console.log(`Message with ID ${message.id} was already deleted or does not exist`);
+//             } else {
+//                 console.error(`Error fetching or deleting message: ${error}`);
+//             }
+//         }
+//     }
+// });
 
 client.on("messageCreate", async message => {
     if (config.channelId.includes(message.channel.id) || message.channel.type === "GUILD_PUBLIC_THREAD") {
@@ -177,7 +185,7 @@ client.on("messageCreate", async message => {
             });
             message.channel.send(channelList);
         } else {
-            message.channel.send("Tidak ada channel yang terdaftar untuk deteksi link phishing. 😔");
+            message.channel.send("❌ Tidak ada channel yang terdaftar untuk deteksi link phishing. 😔");
         }
     }
 });
@@ -185,23 +193,6 @@ client.on("messageCreate", async message => {
 captcha.on("success", async data => {
     console.log(`${data.member.user.username} sudah berhasil Solving CAPTCHA!`);
     data.member.guild.channels.cache.get("1256676647223038075").send(`\`${data.member.user.username} sudah berhasil Solving CAPTCHA!\``);
-});
-
-// crash handler
-process.on('uncaughtException', (error) => {
-    console.error('💻 Bot mengalami kesalahan dan akan di-restart:', error);
-    process.exit(1);
-});
-
-process.on('exit', (code) => {
-    console.log(`💻 Bot sedang di-restart dengan kode ${code}`);
-    console.log(`💻 Bot akan di-restart dalam 1 detik...`);
-    setTimeout(() => {
-        console.log(`💻 Bot sedang di-restart...`);
-        require('child_process').spawn(process.argv[0], process.argv, {
-            stdio: 'inherit'
-        });
-    }, 1000);
 });
 
 client.login(process.env.TOKENBOT);

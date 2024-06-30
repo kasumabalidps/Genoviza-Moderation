@@ -16,4 +16,13 @@ allowedDomains:
   - instagram.com
   - tiktok.com
   - youtu.be
+  - spotify.com
+  - open.spotify.com
+  - patreon.com
+  - apple.com
+  - apple.com/music
+  - apple.com/podcast
+  - apple.com/podcasts
+  - apple.com/music/album
+  - apple.com/music/playlist
 adminId: '1234453620293111849'
