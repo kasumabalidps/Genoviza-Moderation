@@ -23,9 +23,15 @@ module.exports = (client) => {
     });
 
     captcha.on("success", (data) => {
-        const channel = client.channels.cache.get('1256676647223038075');
+        console.log('CAPTCHA success event triggered');
+
+        const { channelLogVerify } = client.config;
+        console.log(`Logging to channel: ${channelLogVerify}`);
+        const channel = client.channels.cache.get(channelLogVerify);
         if (channel) {
             channel.send(`\`\`\`🎉 Ada Member yang Menyelesaikan CAPTCHA!\nUser: ${data.member.user.tag}\nUserID: ${data.member.user.id} 🎉\`\`\``);
+        } else {
+            console.log('Channel not found');
         }
     });
 

@@ -18,6 +18,8 @@ const client = new Client({
 client.commands = new Map();
 client.config = yaml.load(fs.readFileSync('./config/config.yml', 'utf8'));
 
+// console.log(client.config);
+
 const eventHandler = require('./handlers/eventHandler');
 eventHandler(client);
 const commandHandler = require('./handlers/commandHandler');
