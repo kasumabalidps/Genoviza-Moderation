@@ -20,10 +20,7 @@ allowedDomains:
   - open.spotify.com
   - patreon.com
   - apple.com
-  - apple.com/music
-  - apple.com/podcast
-  - apple.com/podcasts
-  - apple.com/music/album
-  - apple.com/music/playlist
+  - tenor.com
+  - giphy.com
 adminId: '1234453620293111849'
 channelLogVerify: '1256676647223038075'
