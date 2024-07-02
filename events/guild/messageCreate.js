@@ -16,3 +16,4 @@ module.exports = async (client, message) => {
         console.error(`❌ Error executing command: ${error.message}`);
     }
 };
+
